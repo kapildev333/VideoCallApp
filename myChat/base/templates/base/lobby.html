@@ -1,5 +1,15 @@
 {% extends 'base/main.html' %}
-
+{% load static %}
 {%block content%}
-<h2>Lobby</h2>
+<main> 
+    <section id = 'form-container'> 
+        <img id = "logo" src="{% static 'images/chat-icon.png' %}" />
+        <div> 
+            <h1> Welcome to Videochat</h1>
+            <p>A group video calling application</p>
+        </div>
+    </section>
+</main>
+
+
 {% endblock content%}
