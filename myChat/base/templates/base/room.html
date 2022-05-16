@@ -5,18 +5,22 @@
     <p>Room Name: <span id="room-name"></span></p>
 </section>
 
-<section id="video-streams">
+<section id="video-streams"></section>
+<section id="controls-wrapper">
+    <section id="controls-wrapper">
+        <div class="icon-wrapper">
+            <img class="control-icon" id="mic-btn" src="{% static 'images/microphone.svg' %}" />
+        </div>
 
-    <div class="video-container" id="user-container-1">
-        <div class="username-wrapper"><span class="user-mame">My name</div>
-        <div class="video-player" id="user-1"></div>
-     </div>
-    <div class="video-container" id="user-container-2">
-        <div class="username-wrapper"><span class="user-mame">Other user name</div>
-        <div class="video-player" id="user-2"></div>
-     </div>
+        <div class="icon-wrapper">
+            <img class="control-icon" id="camera-btn" src="{% static 'images/video.svg' %}" />
+        </div>
+
+        <div class="icon-wrapper">
+            <img class="control-icon" id="leave-btn" src="{% static 'images/leave.svg' %}" />
+        </div>
+    </section>
 </section>
-
-<script type="text/javascript" src="{% static 'assets/AgoraRTC_N-4.8.0.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/AgoraRTC_N-4.11.1.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/streams.js' %}" ></script>
 {% endblock content%}

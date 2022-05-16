@@ -25,16 +25,11 @@ body{
 
 /* Room stylings */
 
-#room-name-wrapper{
-    text-align: center;
-    font-size: 18px;
-}
-
 #video-streams{
     display: flex;
     flex-wrap: wrap;
     height: 85vh;
-    width: 95%;
+    width: 75%;
     margin:0 auto;
 }
 
@@ -48,4 +43,35 @@ body{
     margin: 2px;
     background-color: rgba(198,202,219,1);
     position: relative;
+}
+
+.video-player{
+    height: 100%;
+    width: 100%;
+}
+
+
+
+#controls-wrapper{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    column-gap: 1em;
+    position: fixed;
+    bottom: 20px;
+}
+
+.control-icon{
+    height: 20px;
+    width: 20px;
+    box-shadow: var(--shaddow);
+    background-color: #fff;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+
+}
+
+#leave-btn{
+    background-color: rgb(255, 80, 80, 1);
 }

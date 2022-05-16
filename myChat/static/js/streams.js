@@ -1,12 +1,74 @@
 const APP_ID = "2a437b8895d249889b9ba902153f6bc5"
 const CHANNEL = "main"
-const TOKEN = "0062a437b8895d249889b9ba902153f6bc5IABhVw6jxziIxvu+Q+LQp3PJm5dt8d1rWg4fU+pg5bo/umTNKL8AAAAAEAA5DUG6Oo5/YgEAAQA6jn9i"
-
+const TOKEN = "0062a437b8895d249889b9ba902153f6bc5IACooV5sN+w8cMR9V2gWBmhDXUI/Lcht+X9Abcd4AlCo8mTNKL8AAAAAEAAyf2YEZJmDYgEAAQBkmYNi"
 const client = AgoraRTC.createClient({mode:'rtc',codec:'vp8'})
 
 let localTracks = []
 let remoteUsers = {}
 
 let joinAndDisplayLocalStreams = async () => {
-    await client.join(APP_ID,CHANNEL,TOKEN,null)
+client.on('user-published',handleUserJoined)
+
+client.on('user-left',handleUserLeft)
+    try{
+        UID = await client.join(APP_ID, CHANNEL, TOKEN, null)
+    }catch(error){
+        console.error(error)
+        window.open('/', '_self')
+    }
+    
+    localTracks = await AgoraRTC.createMicrophoneAndCameraTracks()
+
+
+    let player = `<div  class="video-container" id="user-container-${UID}">
+                  <div class="username-wrapper"><span class="user-name">My Name</span></div>
+                  <div class="video-player" id="user-${UID}"></div>   
+                  </div>`
+    
+    document.getElementById('video-streams').insertAdjacentHTML('beforeend', player)
+    localTracks[1].play(`user-${UID}`)
+    await client.publish([localTracks[0], localTracks[1]])
 }
+
+let handleUserJoined = async (user, mediaType) => {
+    remoteUsers[user.uid] = user
+    await client.subscribe(user, mediaType)
+
+    if (mediaType === 'video'){
+        let player = document.getElementById(`user-container-${user.uid}`)
+        if (player != null){
+            player.remove()
+        }
+
+       player = `<div  class="video-container" id="user-container-${user.uid}">
+                  <div class="username-wrapper"><span class="user-name">My Name</span></div>
+                  <div class="video-player" id="user-${user.uid}"></div>
+                  </div>`
+
+        document.getElementById('video-streams').insertAdjacentHTML('beforeend', player)
+        user.videoTrack.play(`user-${user.uid}`)
+    }
+
+    if (mediaType === 'audio'){
+        user.audioTrack.play()
+    }
+}
+
+let handleUserLeft = async(user) => {
+    delete remoteUsers[user.uid]
+    document.getElementById(`user-container-${user.uid}`).remove()
+}
+
+let leaveAndRemoveLocalStream = async () => {
+    for (let i=0; localTracks.length > i; i++){
+        localTracks[i].stop()
+        localTracks[i].close()
+    }
+
+    await client.leave()
+    window.open('/', '_self')
+}
+joinAndDisplayLocalStreams()
+
+
+document.getElementById('leave-btn').addEventListener('click', leaveAndRemoveLocalStream)
