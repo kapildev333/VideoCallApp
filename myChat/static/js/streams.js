@@ -70,6 +70,7 @@ let handleUserLeft = async (user) => {
     document.getElementById(`user-container-${user.uid}`).remove()
 }
 
+
 let leaveAndRemoveLocalStream = async () => {
     for (let i=0; localTracks.length > i; i++){
         localTracks[i].stop()
