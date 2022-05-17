@@ -1,11 +1,11 @@
-const APP_ID = 'YOUR APP ID'
+const APP_ID = '2a437b8895d249889b9ba902153f6bc5'
 const TOKEN = sessionStorage.getItem('token')
 const CHANNEL = sessionStorage.getItem('room')
 let UID = sessionStorage.getItem('UID')
 
 let NAME = sessionStorage.getItem('name')
 
-const client = AgoraRTC.createClient({mode:'rtc', codec:'vp8'})
+const client = AgoraRTC.createClient({mode:'rtc', codec:'h264'})
 
 let localTracks = []
 let remoteUsers = {}
@@ -20,7 +20,7 @@ let joinAndDisplayLocalStream = async () => {
         UID = await client.join(APP_ID, CHANNEL, TOKEN, UID)
     }catch(error){
         console.error(error)
-      //  window.open('/', '_self')
+        window.open('/', '_self')
     }
     
     localTracks = await AgoraRTC.createMicrophoneAndCameraTracks()
@@ -34,7 +34,10 @@ let joinAndDisplayLocalStream = async () => {
     
     document.getElementById('video-streams').insertAdjacentHTML('beforeend', player)
     localTracks[1].play(`user-${UID}`)
-    await client.publish([localTracks[0], localTracks[1]])
+    if (client.connectionState === 'CONNECTED') {
+        await client.publish([localTracks[0], localTracks[1]])
+      }
+ 
 }
 
 let handleUserJoined = async (user, mediaType) => {
@@ -75,7 +78,7 @@ let leaveAndRemoveLocalStream = async () => {
 
     await client.leave()
     //This is somewhat of an issue because if user leaves without actaull pressing leave button, it will not trigger
-
+deleteMember()
     window.open('/', '_self')
 }
 
@@ -118,8 +121,17 @@ let getMember = async (user) => {
     let member = await response.json()
     return member
 }
-
-
+let deleteMember = async () => {
+    let response = await fetch('/delete_member/', {
+        method:'POST',
+        headers: {
+            'Content-Type':'application/json'
+        },
+        body:JSON.stringify({'name':NAME, 'room_name':CHANNEL, 'UID':UID})
+    })
+    let member = await response.json()
+}
+window.addEventListener("beforeunload",deleteMember);
 joinAndDisplayLocalStream()
 
 document.getElementById('leave-btn').addEventListener('click', leaveAndRemoveLocalStream)
